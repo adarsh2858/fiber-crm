@@ -1,21 +1,35 @@
 package handlers
 
 import (
-	"encoding/json"
+	"context"
+	"fmt"
+
+	"github.com/adarsh2858/fiber-crm/pkg/models"
+
+	"github.com/gofiber/fiber"
 )
 
-type User struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
-	Phone string `json:"Phone"`
+func GetUsers(c *fiber.Ctx) {
+	bg := context.Background()
+	fmt.Printf("%v \n", bg)
+	fmt.Println("GetUsers")
+	models.FetchUsers(c)
+	return
 }
 
-func FetchUsers() ([]User, error) { return []User{}, nil }
+func GetUser(c *fiber.Ctx) {
+	fmt.Println("GetUser")
+	return
+}
 
-func FetchUser() (*User, error) { return &User{}, nil }
+func AddUser(c *fiber.Ctx) {
+	fmt.Println("AddUser")
+}
 
-func AddUser() (*User, error) { return &User{}, nil }
+func UpdateUser(c *fiber.Ctx) {
+	fmt.Println("UpdateUser")
+}
 
-func UpdateUser() (*User, error) { return &User{}, nil }
-
-func DeleteUser() error { return nil }
+func RemoveUser(c *fiber.Ctx) {
+	fmt.Println("RemoveUser")
+}
