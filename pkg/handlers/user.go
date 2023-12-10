@@ -19,17 +19,21 @@ func GetUsers(c *fiber.Ctx) {
 
 func GetUser(c *fiber.Ctx) {
 	fmt.Println("GetUser")
+	models.FetchUser(c)
 	return
 }
 
 func AddUser(c *fiber.Ctx) {
 	fmt.Println("AddUser")
+	models.AddUser(c)
 }
 
 func UpdateUser(c *fiber.Ctx) {
 	fmt.Println("UpdateUser")
+	models.UpdateUser(c)
 }
 
 func RemoveUser(c *fiber.Ctx) {
 	fmt.Println("RemoveUser")
+	models.DeleteUser(c)
 }
