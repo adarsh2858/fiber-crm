@@ -5,12 +5,15 @@ go 1.21.4
 require (
 	github.com/gofiber/fiber v1.14.6
 	github.com/jinzhu/gorm v1.9.16
+	github.com/joho/godotenv v1.5.1
+	github.com/twilio/twilio-go v1.15.3
 	go.mongodb.org/mongo-driver v1.13.1
 )
 
 require (
 	github.com/andybalholm/brotli v1.0.0 // indirect
 	github.com/gofiber/utils v0.0.10 // indirect
+	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/gorilla/schema v1.1.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
@@ -19,6 +22,7 @@ require (
 	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/mattn/go-sqlite3 v1.14.0 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.16.0 // indirect
 	github.com/valyala/tcplisten v0.0.0-20161114210144-ceec8f93295a // indirect

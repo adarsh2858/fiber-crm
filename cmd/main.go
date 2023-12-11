@@ -23,17 +23,6 @@ func setupRoutes(app *fiber.App) {
 	app.Post("/crm/user", handlers.AddUser)
 	app.Put("/crm/user/:id", handlers.UpdateUser)
 	app.Delete("/crm/user/:id", handlers.RemoveUser)
-}
-
-func main() {
-	app := fiber.New()
-
-	models.InitDatabase()
-	setupRoutes(app)
-
-	if err := models.Connect(); err != nil {
-		log.Fatal(err)
-	}
 
 	app.Get("/leads", func(c *fiber.Ctx) {
 		query := bson.D{{}}
@@ -50,7 +39,6 @@ func main() {
 		}
 		c.JSON(leads)
 	})
-
 	app.Post("/lead", func(c *fiber.Ctx) {
 		collection := models.Mg.Db.Collection(collectionName)
 		parsedLeadData := new(models.Lead)
@@ -74,7 +62,6 @@ func main() {
 		createdLead.Decode(l)
 		c.Status(http.StatusCreated).JSON(l)
 	})
-
 	app.Put("/lead/:id", func (c *fiber.Ctx) {
 		idParam := c.Params("id")
 
@@ -109,7 +96,6 @@ func main() {
 
 		c.Status(http.StatusOK).JSON(lead)
 	},)
-
 	app.Delete("/lead/:id", func(c *fiber.Ctx){
 		idParam := c.Params("id")
 		leadID, err := primitive.ObjectIDFromHex(idParam)
@@ -129,6 +115,21 @@ func main() {
 
 		c.Status(http.StatusOK).JSON("record deleted")
 	})
+
+	// add twilio otp verification functions and redirect to the service layer for adding logic
+	app.Post("/send-otp", handlers.SendOtp)
+	app.Post("/verify-otp", handlers.VerifyOtp)
+}
+
+func main() {
+	app := fiber.New()
+
+	models.InitDatabase()
+	setupRoutes(app)
+
+	if err := models.Connect(); err != nil {
+		log.Fatal(err)
+	}
 
 	log.Fatal(app.Listen(3000))
 	defer models.DbConn.Close()

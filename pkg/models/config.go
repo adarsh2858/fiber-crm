@@ -35,7 +35,6 @@ const (
 
 var ErrNoDocuments = mongo.ErrNoDocuments
 
-
 var Mg *MongoInstance
 
 type MongoInstance struct {
