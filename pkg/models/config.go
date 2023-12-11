@@ -2,9 +2,13 @@ package models
 
 import (
 	"fmt"
+	"time"
+	"context"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var DbConn *gorm.DB
@@ -23,3 +27,38 @@ func InitDatabase() {
 	DbConn.AutoMigrate(&User{})
 	fmt.Println("Migrated")
 }
+
+const (
+	mongoURI       = "mongodb://localhost:27017/" + dBName
+	dBName         = "fiber-leads"
+)
+
+var ErrNoDocuments = mongo.ErrNoDocuments
+
+
+var Mg *MongoInstance
+
+type MongoInstance struct {
+	Client *mongo.Client
+	Db     *mongo.Database
+}
+
+func Connect() error {
+	client, err := mongo.NewClient(options.Client().ApplyURI(mongoURI))
+	if err != nil {
+		return err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	err = client.Connect(ctx)
+	dB := client.Database(dBName)
+
+	Mg = &MongoInstance{
+		Client: client,
+		Db:     dB,
+	}
+	return err
+}
+
