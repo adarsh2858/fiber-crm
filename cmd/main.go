@@ -11,6 +11,7 @@ import (
 
 	"github.com/gofiber/fiber"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -82,7 +83,7 @@ func main() {
 
 		var leads []Lead = make([]Lead, 0)
 
-		if err := cursor.All(c.Context(), leads); err != nil {
+		if err := cursor.All(c.Context(), &leads); err != nil {
 			c.Status(400).SendString(err.Error())
 		}
 		c.JSON(leads)
@@ -115,6 +116,61 @@ func main() {
 		l := &Lead{}
 		createdLead.Decode(l)
 		c.Status(http.StatusCreated).JSON(l)
+	})
+
+	app.Put("/lead/:id", func (c *fiber.Ctx) {
+		idParam := c.Params("id")
+
+		leadID, err := primitive.ObjectIDFromHex(idParam)
+		if err != nil {
+			c.Status(http.StatusBadRequest).SendString(err.Error())
+		}
+
+		lead := new(Lead)
+		err = c.BodyParser(lead)
+		if err != nil {
+			c.Status(http.StatusBadRequest).SendString(err.Error())
+		}
+
+		query := bson.D{{Key:"_id", Value:leadID}}
+		update := bson.D{
+			{Key: "$set",
+			Value: bson.D{
+				{Key: "name", Value:lead.Name},
+				{Key: "capital", Value:lead.Capital},
+				{Key: "age", Value:lead.Age},
+			},
+		},}
+
+		err = mg.Db.Collection(collectionName).FindOneAndUpdate(c.Context(), query, update).Err()
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				c.Status(http.StatusBadRequest).SendString(err.Error())
+			}
+			c.Status(500).SendString(err.Error())
+		}
+
+		c.Status(http.StatusOK).JSON(lead)
+	},)
+
+	app.Delete("/lead/:id", func(c *fiber.Ctx){
+		idParam := c.Params("id")
+		leadID, err := primitive.ObjectIDFromHex(idParam)
+		if err != nil {
+			c.Status(http.StatusBadRequest).SendString(err.Error())
+		}
+
+		query := bson.D{{Key:"_id", Value: leadID}}
+		result, err := mg.Db.Collection(collectionName).DeleteOne(c.Context(), &query)
+		if err != nil {
+			c.Status(http.StatusBadRequest).SendString(err.Error())
+		}
+
+		if result.DeletedCount < 1 {
+			c.SendStatus(http.StatusNotFound)
+		}
+
+		c.Status(http.StatusOK).JSON("record deleted")
 	})
 
 	log.Fatal(app.Listen(3000))
