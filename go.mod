@@ -3,6 +3,7 @@ module github.com/adarsh2858/fiber-crm
 go 1.21.4
 
 require (
+	github.com/adarsh2858/email-verifier-tool v0.0.0-20231225133300-f6e2caa7fd09
 	github.com/gofiber/fiber v1.14.6
 	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.5.1
